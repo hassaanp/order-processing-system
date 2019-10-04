@@ -33,7 +33,12 @@ docker-compose up -d
 In order to rebuild the services add the --build flag at the end
 
 ```
-docker-compose --build
+docker-compose up --build
+```
+or
+
+```
+docker-compose build
 ```
 
 ### Access the API
@@ -64,6 +69,13 @@ A user is allowed to create an order, cancel an order, get a specific order or g
 * POST /api/orders - creates an order against the user
 * GET /api/orders/{id} - gets a specific order for the user
 * DELETE /api/orders/{id} - cancels a specific order for the user
+
+Sample body for order creation:
+```
+{
+	"bill": 2000
+}
+```
 
 The provided Insomnia collection has all the routes provided with prefilled request body, headers etc.
 

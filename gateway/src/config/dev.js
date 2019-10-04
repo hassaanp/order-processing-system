@@ -1,4 +1,4 @@
 export const config = {
-  paymentApiUrl: 'localhost:3000',
-  orderApiUrl: 'localhost:3001'
+  paymentApiUrl: 'payments-api:3000',
+  orderApiUrl: 'orders-api:3001'
 };

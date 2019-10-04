@@ -1,0 +1,35 @@
+version: '3'
+services:
+  gateway:
+    container_name: gateway
+    restart: always
+    build: ./gateway
+    ports:
+      - "8000:8000"
+    links:
+      - orders-api
+      - payments-api
+  orders-api:
+    container_name: orders-api
+    restart: always
+    build: ./orders-api
+    links:
+      - mongo
+      - rabbitmq
+  payments-api:
+    container_name: payments-api
+    restart: always
+    build: ./payments-api
+    links:
+      - mongo
+      - rabbitmq
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3
+    ports:
+      - "5672:5672"
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - "27017:27017"

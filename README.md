@@ -45,7 +45,7 @@ To access the API you can send out curl requests to `http://localhost:8000/api` 
 The overall architecture includes two node.js applications, a messaging broker, a gateway and a database service. The entire application is brought up with docker-compose as a proof of concept which can be replaced with a simple kubernetes cluster.
 
 Here is a diagramatic overview of the system:
-![](https://ibb.co/6wWyFyn)
+![](https://i.ibb.co/XLCWtW2/order-processing-system.png)
 
 ### Authentication
 

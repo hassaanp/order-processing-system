@@ -3,13 +3,13 @@ import { paymentCreateEventEmitter } from '../../utils/eventEmitters';
 
 let ordersSchema = new mongoose.Schema(
   {
-    userId: {
+    createdBy: {
       type: String,
       required: true
     },
     status: {
       type: String,
-      enum: ['created', 'confirmed', 'cancelled', 'delivered']
+      enum: ['created', 'confirmed', 'cancelled', 'declined', 'delivered']
     },
     bill: {
       type: Number,

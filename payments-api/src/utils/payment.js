@@ -11,7 +11,7 @@ export async function payWithCreditCard(creditCardDetails, bill) {
     typeof creditCardDetails.expiry == 'string' &&
     typeof bill == 'number'
   ) {
-    return true;
+    return Math.random() > 0.5;
   } else {
     throw new Error('missing required parameters');
   }

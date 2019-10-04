@@ -11,10 +11,14 @@ let paymentsSchema = new mongoose.Schema(
       required: true,
       ref: 'orders'
     },
-    paid: {
+    processed: {
       type: Boolean
     },
-    userId: {
+    status: {
+      type: String,
+      enum: ['pending', 'paid', 'declined']
+    },
+    createdBy: {
       type: String,
       required: true
     }
@@ -23,7 +27,10 @@ let paymentsSchema = new mongoose.Schema(
 );
 
 paymentsSchema.post('validate', doc => {
-  doc.paid = false;
+  if (!doc.status) {
+    doc.processed = false;
+    doc.status = 'pending';
+  }
 });
 
 export let Payments = mongoose.model('payments', paymentsSchema);

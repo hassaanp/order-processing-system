@@ -1,7 +1,7 @@
 export const get = model => async (req, res) => {
   try {
     let doc = await model
-      .findById(req.params.id)
+      .findOne({ _id: req.params.id, createdBy: req.user.id })
       .lean()
       .exec();
     if (!doc) {
@@ -17,7 +17,7 @@ export const get = model => async (req, res) => {
 export const getAll = model => async (req, res) => {
   try {
     let docs = await model
-      .find({ userId: req.user.id })
+      .find({ createdBy: req.user.id })
       .lean()
       .exec();
     if (!docs) {
@@ -32,7 +32,7 @@ export const getAll = model => async (req, res) => {
 
 export const create = model => async (req, res) => {
   try {
-    let doc = await model.create({ ...req.body });
+    let doc = await model.create({ ...req.body, createdBy: req.user.id });
     res.status(201).json({ data: doc });
   } catch (error) {
     console.error(error);
@@ -43,8 +43,8 @@ export const create = model => async (req, res) => {
 export const update = model => async (req, res) => {
   try {
     let updatedDoc = await model
-      .findByIdAndUpdate(
-        req.params.id,
+      .findOneAndUpdate(
+        { _id: req.params.id, createdBy: req.user.id },
         {
           ...req.body
         },
@@ -65,7 +65,7 @@ export const update = model => async (req, res) => {
 export const removeOne = model => async (req, res) => {
   try {
     let removed = await model
-      .findByIdAndRemove(req.params.id)
+      .findOneAndRemove({ _id: req.params.id, createdBy: req.user.id })
       .lean()
       .exec();
     if (!removed) {

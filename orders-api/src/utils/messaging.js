@@ -2,20 +2,23 @@ import config from '../config';
 import amqlib from 'amqplib';
 import {
   paymentCreateEventEmitter,
-  orderPaidEventEmitter
+  paymentProcessedEventEmitter
 } from './eventEmitters';
 
 export const messagingBrokerInitialization = async () => {
   try {
     let messagingBroker = await amqlib.connect(config.rabbitmqUrl);
-    let orderChannel = await messagingBroker.createChannel();
-    await orderChannel.assertQueue(config.orderConfirmedEvent);
-    orderChannel.consume(config.orderConfimredEvent, msg => {
+    let paymentProcessedChannel = await messagingBroker.createChannel();
+    await paymentProcessedChannel.assertQueue(config.paymentProcessedEvent);
+    paymentProcessedChannel.consume(config.paymentProcessedEvent, msg => {
       if (msg !== null) {
         let parsedMessage = msg.content.toString();
         console.log(parsedMessage);
-        orderPaidEventEmitter.emit('order-paid-event-caught', parsedMessage);
-        orderChannel.ack(msg);
+        paymentProcessedEventEmitter.emit(
+          'payment-processed-event-caught',
+          parsedMessage
+        );
+        paymentProcessedChannel.ack(msg);
       }
     });
     let paymentChannel = await await messagingBroker.createChannel();

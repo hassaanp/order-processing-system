@@ -2,23 +2,23 @@ import config from '../config';
 import amqlib from 'amqplib';
 import {
   paymentCreateEventEmitter,
-  orderPaidEventEmitter
+  paymentProcessedEventEmitter
 } from './eventEmitters';
 
 export const messagingBrokerInitialization = async () => {
   try {
     let messagingBroker = await amqlib.connect(config.rabbitmqUrl);
-    let orderChannel = await messagingBroker.createChannel();
-    await orderChannel.assertQueue(config.orderConfirmedEvent);
-    orderPaidEventEmitter.on('payment-successful', message => {
-      orderChannel.sendToQueue(
-        config.orderConfirmedEvent,
+    let paymentProcessedChannel = await messagingBroker.createChannel();
+    await paymentProcessedChannel.assertQueue(config.paymentProcessedEvent);
+    paymentProcessedEventEmitter.on('payment-processed', message => {
+      paymentProcessedChannel.sendToQueue(
+        config.paymentProcessedEvent,
         Buffer.from(message)
       );
     });
-    let paymentChannel = await messagingBroker.createChannel();
-    await paymentChannel.assertQueue(config.paymentCreateEvent);
-    paymentChannel.consume(config.paymentCreateEvent, msg => {
+    let paymentCreateChannel = await messagingBroker.createChannel();
+    await paymentCreateChannel.assertQueue(config.paymentCreateEvent);
+    paymentCreateChannel.consume(config.paymentCreateEvent, msg => {
       if (msg !== null) {
         let parsedMessage = msg.content.toString();
         console.log(parsedMessage);
@@ -26,7 +26,7 @@ export const messagingBrokerInitialization = async () => {
           'payment-create-event-caught',
           parsedMessage
         );
-        paymentChannel.ack(msg);
+        paymentCreateChannel.ack(msg);
       }
     });
   } catch (error) {

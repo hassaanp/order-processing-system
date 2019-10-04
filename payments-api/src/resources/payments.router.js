@@ -3,10 +3,7 @@ import paymentsControllers from './payments.controllers';
 
 let router = Router();
 
-router
-  .route('/')
-  .get(paymentsControllers.getAll)
-  .post(paymentsControllers.create);
+router.route('/').get(paymentsControllers.getAll);
 
 router.route('/:id').get(paymentsControllers.get);
 

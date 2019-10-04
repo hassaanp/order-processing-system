@@ -4,7 +4,7 @@ const baseConfig = {
   env,
   isDev: env === 'development',
   port: 3000,
-  orderConfirmedEvent: 'order-confirmed-event',
+  paymentProcessedEvent: 'payment-processed-event',
   paymentCreateEvent: 'payment-create-event'
 };
 

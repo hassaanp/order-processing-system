@@ -1,42 +1,43 @@
 import { Payments } from './payments.model';
 import { crudControllers } from './../utils/crud';
 import { payWithCreditCard } from './../utils/payment';
-import { orderPaidEventEmitter } from '../utils/eventEmitters';
+import { paymentProcessedEventEmitter } from '../utils/eventEmitters';
 
 let initiatePayment = async (req, res) => {
   try {
-    let paymentDoc = await Payments.findById(req.params.id)
-      .lean()
-      .exec();
-    if (!paymentDoc || paymentDoc.paid) {
+    let paymentDoc = await Payments.findOne({
+      orderId: req.params.id,
+      createdBy: req.user.id
+    });
+    if (!paymentDoc || paymentDoc.processed) {
       return res
-        .status(400)
+        .status(404)
         .send('payment already processed or does not exist');
     }
     const paid = await payWithCreditCard(
       req.body.creditCardDetails,
       paymentDoc.bill
     );
-    if (paid) {
-      let updatedDoc = await Payments.findByIdAndUpdate(
-        req.params.id,
-        { paid: true },
-        { new: true }
-      )
-        .lean()
-        .exec();
-      if (!updatedDoc) {
-        return res.status(400).send('could not update payment status');
+    paymentDoc.processed = true;
+    paymentDoc.status = paid ? 'paid' : 'declined';
+    await paymentDoc.save({ new: true }, error => {
+      if (error) {
+        console.error(error);
+        throw new Error('could not complete the payment');
       }
-      orderPaidEventEmitter.emit(
-        'payment-successful',
-        JSON.stringify(paymentDoc)
-      );
+    });
+    paymentProcessedEventEmitter.emit(
+      'payment-processed',
+      JSON.stringify(paymentDoc.toJSON())
+    );
+    if (paid) {
       res.status(200).send('payment was successful');
+    } else {
+      res.status(400).send('payment was declined');
     }
   } catch (error) {
     console.error(error);
-    res.status(400).send('payment was unsuccessful');
+    res.status(400).send('payment could not be processed at this time');
   }
 };
 

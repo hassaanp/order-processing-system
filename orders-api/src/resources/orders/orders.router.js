@@ -11,7 +11,6 @@ router
 router
   .route('/:id')
   .get(controllers.get)
-  .put(controllers.update)
   .delete(controllers.cancelOrder);
 
 export default router;

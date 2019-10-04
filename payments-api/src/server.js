@@ -3,8 +3,8 @@ import { json, urlencoded } from 'body-parser';
 import morgan from 'morgan';
 import config from './config';
 import cors from 'cors';
+import { protect } from './utils/auth';
 import { connectDb } from './utils/db';
-import { authenticate } from './utils/auth';
 import { messagingBrokerInitialization } from './utils/messaging';
 import { paymentCreateEventEmitter } from './utils/eventEmitters';
 import { createPayment } from './resources/payments.eventHandlers';
@@ -18,7 +18,7 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-app.use('/api', authenticate);
+app.use('/api', protect);
 app.use('/api/payments', PaymentRouter);
 
 paymentCreateEventEmitter.on('payment-create-event-caught', async message => {

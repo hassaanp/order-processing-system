@@ -114,6 +114,13 @@ The provided Insomnia collection has all the routes provided with prefilled requ
 #### Events Received from Messaging Broker
 * payment-create-event - received whenever an order is created so that a corresponding payment object is created
 
+## Testing
+In order to run the unit tests, go to either of the apps folders `orders-api/` or `payments-api/` and run the command:
+
+```
+npm run test
+```
+
 ## Built With
 
 * [Express](https://expressjs.com/) - Fast, unopinionated, minimalist web framework for Node.js
